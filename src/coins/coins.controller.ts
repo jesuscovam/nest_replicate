@@ -1,7 +1,9 @@
-import { Controller, Get, Param, ParseIntPipe, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Post, Body, Delete, Patch } from '@nestjs/common';
 import { CoinsService } from './coins.service';
 import { Coin } from './coin.entity';
 import { CreateCoinDto } from './dto/createCoin.dto';
+import { CoinStatus } from './status.enum';
+import { ValidateCoinStatus } from './pipes/create.coin.pipe';
 
 @Controller('coins')
 export class CoinsController {
@@ -15,5 +17,18 @@ export class CoinsController {
     @Post()
     createCoin(@Body() createCoinDto: CreateCoinDto): Promise<Coin>{
         return this.coinServices.createCoin(createCoinDto);
+    }
+
+    @Delete('/:id')
+    deleteById(@Param('id', ParseIntPipe) id: number): Promise<void>{
+        return this.coinServices.deleteById(id)
+    }
+
+    @Patch('/:id/status')
+    updateStatus(
+        @Param('id', ParseIntPipe) id: number,
+        @Body('status', ValidateCoinStatus) status: CoinStatus
+    ): Promise<Coin>{
+        return this.coinServices.updateCoin(id, status)
     }
 }
