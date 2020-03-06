@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Coin } from './coin.entity';
 import { CreateCoinDto } from './dto/createCoin.dto';
 import { CoinStatus } from './status.enum';
+import { GetCoinsWithFilters } from './dto/getWithFilters.dto';
 
 @Injectable()
 export class CoinsService {
@@ -11,6 +12,10 @@ export class CoinsService {
         @InjectRepository(CoinRepository)
         private coinRepository: CoinRepository
     ){}
+
+    async getCoins(getCoinsFilter: GetCoinsWithFilters): Promise<Coin[]> {
+        return this.coinRepository.getCoins(getCoinsFilter);
+    }
     
     async getCoinById(id: number): Promise<Coin>{
         const found = await this.coinRepository.findOne(id);

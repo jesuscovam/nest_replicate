@@ -1,13 +1,20 @@
-import { Controller, Get, Param, ParseIntPipe, Post, Body, Delete, Patch } from '@nestjs/common';
-import { CoinsService } from './coins.service';
+import { Controller, Get, Query, ValidationPipe, Param, ParseIntPipe, Post, Body, Delete, Patch } from '@nestjs/common';
+import { GetCoinsWithFilters } from './dto/getWithFilters.dto';
 import { Coin } from './coin.entity';
 import { CreateCoinDto } from './dto/createCoin.dto';
-import { CoinStatus } from './status.enum';
 import { ValidateCoinStatus } from './pipes/create.coin.pipe';
+import { CoinStatus } from './status.enum';
+import { CoinsService } from './coins.service';
 
 @Controller('coins')
 export class CoinsController {
-    constructor(private coinServices: CoinsService){}
+    constructor(private coinServices: CoinsService) {}
+
+
+    @Get()
+    getCoins(@Query(ValidationPipe) getCoinsFilter: GetCoinsWithFilters): Promise<Coin[]>{
+        return this.coinServices.getCoins(getCoinsFilter)
+    }
 
     @Get('/:id')
     getCoinById(@Param('id', ParseIntPipe) id: number): Promise<Coin>{
